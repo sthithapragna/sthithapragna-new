@@ -37,9 +37,3 @@ This is not a real company's project. Names, schemas, table names, column
 names and business details are all invented. The failure modes are not.
 Every drift point and every defect is a pattern taken from real warehouse
 work, reconstructed here so it can be taught without exposing anyone's data.
-
-## Instructor folder
-
-`instructor/` contains the answer key. It lists every planted drift point and
-every defect, with what each one teaches. Do not read it first - it removes
-the entire value of the exercise.
