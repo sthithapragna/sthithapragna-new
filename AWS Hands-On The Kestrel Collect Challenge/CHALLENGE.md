@@ -44,7 +44,7 @@ click-and-collect service, in six stores.
 - A hidden test store (`9999`) exists for automated tests. Customers never
   see it.
 
-The course repository provides Kestrel's policy documents (`kb/`), its
+The course folder provides Kestrel's policy documents (`kb/`), its
 product catalogue and a labelled feedback set (`data/`), and the starter
 front end (`app/`).
 
@@ -122,15 +122,15 @@ you found it, the incident postmortem, and what it costs to run.
 
 ## The grader
 
-`grader/` in the course repository checks a live deployment against the
-requirements marked **Grader**, by level. Clone the course repository beside
-your own copy and run it from there, so `git pull` brings each new level's
-checks:
+`grader/` checks a live deployment against the requirements marked
+**Grader**, by level. It comes with the starter files, so it's in your own
+repository. New checks arrive as the course goes on; fetch them with
+`python grader/grade.py --update`, then run it:
 
     python grader/grade.py --url https://your-domain --level 1
 
-It only sends ordinary GET requests, and needs nothing but Python 3.10 or
-later. For 1.2, add `--storage-url` with your storage's own address.
+At Level 1 it only sends ordinary GET requests. It needs nothing but
+Python 3.10 or later. For 1.2, add `--storage-url` with your storage's own address.
 
 It reports each requirement by number. Requirements marked
 **Your write-up** are checked by reading your write-up and repository.
@@ -138,5 +138,5 @@ It reports each requirement by number. Requirements marked
 ## Where the levels end
 
 Each level is a finished thing to show an employer. Stop at any level, or
-skip ahead: the course repository has a tag for every level, so you can
+skip ahead: the course folder has a download for every level, so you can
 deploy Level 2 and start straight at Level 3.
