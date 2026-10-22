@@ -1,0 +1,69 @@
+:root {
+  --paper: #fbfaf6;
+  --card: #ffffff;
+  --ink: #1c2622;
+  --muted: #5d6b64;
+  --line: #e2e6df;
+  --green: #1f6f4a;
+  --green-soft: #e6f2eb;
+  --yellow: #f4c542;
+  --red: #b4432f;
+  --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.5 var(--font); min-height: 100vh; display: flex; flex-direction: column; }
+a { color: var(--green); }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 14px max(16px, 4vw); background: var(--card); border-bottom: 1px solid var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-size: 19px; }
+.brand b { color: var(--green); }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav a { color: var(--ink); text-decoration: none; padding: 7px 12px; border-radius: 6px; font-size: 15px; }
+nav a:hover { background: var(--green-soft); }
+nav a[aria-current] { background: var(--green); color: #fff; }
+
+.page { flex: 1; width: 100%; max-width: 920px; margin: 0 auto; padding: 32px max(16px, 4vw) 48px; }
+h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin: 0 0 8px; }
+.intro p, .sub { color: var(--muted); margin: 0 0 24px; max-width: 60ch; }
+.muted { color: var(--muted); }
+
+.stores { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.store-card { display: grid; gap: 4px; padding: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--ink); }
+.store-card:hover { border-color: var(--green); }
+.store-name { font-weight: 600; font-size: 17px; }
+.store-meta { color: var(--muted); font-size: 14px; }
+.store-go { margin-top: 8px; color: var(--green); font-weight: 600; font-size: 14px; }
+
+.back { display: inline-block; margin-bottom: 14px; font-size: 14px; }
+.days { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; }
+.days a { flex: none; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); text-decoration: none; font-size: 14px; white-space: nowrap; }
+.days a[aria-selected="true"] { background: var(--green); border-color: var(--green); color: #fff; }
+.day-head { font-size: 18px; margin: 18px 0 10px; }
+
+.slots { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.slot { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 16px; padding: 12px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.slot-time { font-weight: 600; font-variant-numeric: tabular-nums; }
+.slot-left { font-size: 14px; color: var(--green); font-weight: 600; }
+.slot.full .slot-left { color: var(--red); }
+.slot.closed { opacity: .55; }
+.slot.closed .slot-left { color: var(--muted); }
+.slot button { font: 600 14px var(--font); padding: 8px 16px; border: 0; border-radius: 6px; background: var(--green); color: #fff; cursor: pointer; }
+.slot button:disabled { background: var(--line); color: var(--muted); cursor: default; }
+
+.placeholder { padding: 24px; background: var(--card); border: 1px dashed var(--line); border-radius: 10px; max-width: 60ch; }
+.placeholder p { margin: 0 0 6px; }
+.error { white-space: pre-wrap; background: #fff4f1; color: var(--red); padding: 12px; border-radius: 6px; font-size: 13px; }
+
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 14px max(16px, 4vw); border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.mode { font-weight: 600; padding: 1px 8px; border-radius: 4px; }
+.mode[data-mode="sample"] { background: var(--yellow); color: var(--ink); }
+.mode[data-mode="live"] { background: var(--green-soft); color: var(--green); }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 8px; font-size: 15px; box-shadow: 0 6px 24px rgb(0 0 0 / .2); }
+
+@media (max-width: 520px) {
+  .slot { grid-template-columns: 1fr auto; }
+  .slot button { grid-column: 1 / -1; }
+}

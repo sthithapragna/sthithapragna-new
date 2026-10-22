@@ -1,0 +1,9 @@
+[
+  {"store_id": "0001", "name": "Kestrel Kensington Superstore", "format": "Superstore", "region": "London", "capacity": 8},
+  {"store_id": "0023", "name": "Kestrel Leeds Superstore", "format": "Superstore", "region": "Yorkshire and the Humber", "capacity": 8},
+  {"store_id": "0047", "name": "Kestrel Manchester Superstore", "format": "Superstore", "region": "North West", "capacity": 8},
+  {"store_id": "0088", "name": "Kestrel Bristol Superstore", "format": "Superstore", "region": "South West", "capacity": 8},
+  {"store_id": "0131", "name": "Kestrel Glasgow Superstore", "format": "Superstore", "region": "Scotland", "capacity": 8},
+  {"store_id": "0190", "name": "Kestrel Cardiff Local", "format": "Local", "region": "Wales", "capacity": 4},
+  {"store_id": "9999", "name": "Kestrel Test Store", "format": "Test", "region": "None", "capacity": 4, "hidden": true}
+]
