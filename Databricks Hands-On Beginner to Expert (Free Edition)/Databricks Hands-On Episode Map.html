@@ -1,0 +1,450 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Databricks Hands-On Episode Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a route map of the 117 episodes, one line per Season, coloured by level; a sticky detail card on the right. Single dark look on purpose, to match the course slides it is shown between. */
+:root {
+  color-scheme: dark;
+  --bg: #0f1623;
+  --panel: #152030;
+  --panel-2: #1b2839;
+  --line: #26354a;
+  --fg: #e8edf4;
+  --muted: #8b9ab0;
+  --faint: #56667d;
+  --accent: #f5a524;
+  --l0: #8794a8;
+  --l1: #3cc7a8;
+  --l2: #5b9df0;
+  --l3: #ec8a62;
+  --l4: #b493f0;
+  --display: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--display);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 40px;
+}
+.wrap { max-width: 1480px; margin: 0 auto; display: grid; gap: 22px; }
+
+header { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+h1 { margin: 0; font-weight: 600; font-size: clamp(28px, 3.4vw, 44px); line-height: 1.1; text-wrap: balance; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.stats b { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+.progress { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; max-width: 520px; }
+.progress span { display: block; height: 100%; background: var(--accent); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: 500 13px var(--display); color: var(--fg); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 10px;
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+}
+.chip i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.chip[aria-pressed="false"] { color: var(--faint); }
+.chip[aria-pressed="false"] i { background: transparent; box-shadow: inset 0 0 0 2px var(--c); }
+.chip:focus-visible, .stop:focus-visible, .nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 28px; align-items: start; }
+@media (max-width: 980px) { main { grid-template-columns: minmax(0, 1fr); } }
+
+.map { display: grid; gap: 4px; min-width: 0; }
+.part { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 18px; padding: 14px 0; border-top: 1px solid var(--line); transition: opacity .2s; }
+.part:first-child { border-top: 0; }
+.part.dim { opacity: .22; }
+@media (max-width: 640px) { .part { grid-template-columns: minmax(0, 1fr); gap: 10px; } }
+.part-head { display: grid; gap: 4px; align-content: start; }
+.part-num { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--c); text-transform: uppercase; }
+.part-name { font-weight: 600; font-size: 16px; line-height: 1.25; }
+.part-meta { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+.stops { display: flex; flex-wrap: wrap; gap: 6px 0; overflow: hidden; }
+.stop {
+  position: relative; width: 84px; display: grid; justify-items: center; gap: 10px;
+  background: none; border: 0; color: var(--fg); cursor: pointer; padding: 2px 0 4px; font: inherit;
+}
+.stop::before {
+  content: ""; position: absolute; top: 20px; left: 50%; width: 100%; height: 3px; background: var(--c); opacity: .55;
+}
+.stop:last-child::before { display: none; }
+.dot {
+  position: relative; z-index: 1; width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; font: 600 13px var(--mono); font-variant-numeric: tabular-nums;
+  background: var(--bg); color: var(--c); box-shadow: inset 0 0 0 3px var(--c);
+  transition: transform .15s;
+}
+.dot.w3 { font-size: 11.5px; letter-spacing: -.02em; }
+.stop[data-status="built"] .dot { background: var(--c); color: var(--bg); }
+.stop[data-status="next"] .dot { box-shadow: inset 0 0 0 3px var(--c), 0 0 0 4px var(--bg), 0 0 0 6px var(--accent); }
+.stop:hover .dot { transform: scale(1.08); }
+.stop.sel .dot { transform: scale(1.14); box-shadow: inset 0 0 0 3px var(--c), 0 0 0 4px var(--bg), 0 0 0 7px var(--fg); }
+.paid {
+  position: absolute; z-index: 2; top: -2px; left: calc(50% + 12px);
+  width: 15px; height: 15px; border-radius: 50%; display: grid; place-items: center;
+  font: 700 9px var(--mono); color: var(--bg); background: var(--accent); box-shadow: 0 0 0 2px var(--bg);
+}
+.paid.part-paid { background: var(--bg); color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 2px var(--bg); }
+.stop .lab { font-size: 11.5px; line-height: 1.2; color: var(--muted); text-align: center; max-width: 80px; min-height: 2.4em; }
+.stop.sel .lab { color: var(--fg); font-weight: 500; }
+.here {
+  position: absolute; z-index: 3; top: -16px; left: 50%; transform: translateX(-50%);
+  font: 600 9px var(--mono); letter-spacing: .12em; color: var(--bg); background: var(--accent);
+  padding: 2px 6px; border-radius: 3px; white-space: nowrap;
+}
+.stops:has(.here) { padding-top: 22px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--mono); font-size: 11px; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend .d { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--l0); }
+.legend .d.b { background: var(--l0); }
+.legend .d.n { box-shadow: inset 0 0 0 2px var(--l0), 0 0 0 2px var(--bg), 0 0 0 3.5px var(--accent); }
+.legend .p { position: static; width: 14px; height: 14px; box-shadow: none; }
+
+aside { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+@media (max-width: 980px) { aside { position: static; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.card-top { padding: 18px 20px 16px; border-top: 4px solid var(--c); display: grid; gap: 10px; }
+.card .ep { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--c); text-transform: uppercase; }
+.card h2 { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.25; text-wrap: balance; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 13px; }
+.facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); padding-top: 2px; }
+.facts dd { margin: 0; color: var(--fg); }
+.facts dd small { color: var(--muted); font-size: 12px; }
+.pill { display: inline-block; font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; }
+.pill.built { background: var(--c); color: var(--bg); }
+.pill.next { background: var(--accent); color: var(--bg); }
+.pill.planned { box-shadow: inset 0 0 0 1px var(--faint); color: var(--muted); }
+.break { background: var(--panel-2); padding: 14px 20px 16px; border-top: 1px solid var(--line); display: grid; gap: 6px; }
+.break .k { font: 600 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.break .k em { font-style: normal; color: var(--faint); letter-spacing: .1em; }
+.break p { margin: 0; font-size: 15px; line-height: 1.45; }
+.note { padding: 12px 20px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.45; color: var(--muted); }
+.nav { display: flex; gap: 8px; padding: 12px 20px 16px; border-top: 1px solid var(--line); }
+.nav button {
+  flex: 1; font: 500 13px var(--display); color: var(--fg); background: var(--panel-2);
+  border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; cursor: pointer;
+}
+.nav button:disabled { opacity: .35; cursor: default; }
+.hint { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 10px; line-height: 1.6; }
+.hint kbd { font-family: var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 5px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Databricks Hands-On &middot; Kestrel Foods, Redshift to Databricks</div>
+    <h1>Every episode, from a Free Edition account to an expert lakehouse</h1>
+    <div class="stats" id="stats"></div>
+    <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+    <div class="filters" id="filters" role="group" aria-label="Show levels"></div>
+    <div class="legend" aria-hidden="true">
+      <span><i class="d b"></i>Built</span>
+      <span><i class="d n"></i>Next up</span>
+      <span><i class="d"></i>Planned</span>
+      <span><i class="paid p">&pound;</i>Paid trial</span>
+      <span><i class="paid part-paid p">&pound;</i>Partly paid</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="map" id="map"></div>
+    <aside>
+      <div class="card" id="card" aria-live="polite"></div>
+      <div class="hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> step through episodes &nbsp;&middot;&nbsp; add <kbd>#e39</kbd> to the link to mark "you are here"</div>
+    </aside>
+  </main>
+</div>
+
+<script>
+const LEVELS = {
+  0: { name: "Start here", c: "var(--l0)" },
+  1: { name: "Beginner", c: "var(--l1)" },
+  2: { name: "Intermediate", c: "var(--l2)" },
+  3: { name: "Advanced", c: "var(--l3)" },
+  4: { name: "Expert", c: "var(--l4)" }
+};
+// range: the level span the plan gives the season; lv: the colour and filter it sits under
+const PARTS = [
+  { n: 0, name: "Start here", lv: 0, range: "Beginner" },
+  { n: 1, name: "First week at Kestrel", lv: 1, range: "Beginner" },
+  { n: 2, name: "Project 1: the store sales lakehouse", lv: 2, range: "Beginner to Intermediate" },
+  { n: 3, name: "Project 2: rebuilding it declaratively", lv: 2, range: "Intermediate" },
+  { n: 4, name: "Project 3: real-time cold-chain monitoring", lv: 3, range: "Intermediate to Advanced" },
+  { n: 5, name: "Project 4: exec dashboard and self-service analytics", lv: 2, range: "Intermediate" },
+  { n: 6, name: "Governance: the auditor is coming", lv: 3, range: "Advanced" },
+  { n: 7, name: "Performance and cost: the bill doubled", lv: 3, range: "Advanced" },
+  { n: 8, name: "Production engineering", lv: 3, range: "Advanced" },
+  { n: 9, name: "ML: demand forecasting and loyalty churn", lv: 3, range: "Advanced" },
+  { n: 10, name: "GenAI: the Kestrel store assistant", lv: 4, range: "Expert" },
+  { n: 11, name: "Apps and operational data", lv: 4, range: "Expert" },
+  { n: 12, name: "Capstone and career", lv: 4, range: "Expert" }
+];
+const EST = 12; // minutes assumed for an unbuilt episode (built episodes average about 12)
+// [ep, season, short label, title, break-it moment, minutes (built: runbook midpoint; 0 = estimate), status, environment]
+// environment: "" Free Edition, "FE?" should work on Free Edition (confirmed in the trial), "PAID" trial only, "partPAID" partly trial
+const EPS = [
+  [0, 0, "Trailer", "Trailer: meet Kestrel and what you'll build", "", 6],
+  [1, 0, "Setup", "Free Edition setup, and the only three places you need on day one", "Tutorial code fails: sparkContext and /FileStore errors", 12],
+  [2, 0, "Sources", "Building Kestrel's source systems", "Wales' 12 September file arrives late, in the 15 September delivery", 15],
+
+  [3, 1, "Notebooks", "Notebooks properly, including Genie Code (formerly Databricks Assistant)", "The assistant's confident answer counts 131 stores, not 66", 13],
+  [4, 1, "Unity Catalog", "Unity Catalog in plain English, and why /FileStore tutorials fail", "An inner join silently drops 1,046 Solihull lines", 12],
+  [5, 1, "read_files", "First SQL with read_files", "7.16 lines per basket: a re-sent file counted twice", 11],
+  [6, 1, "DataFrames", "DataFrames, lazy evaluation and serverless", "A reused temp view serves week 2 data as week 1", 12],
+  [7, 1, "Inference", "Schema inference traps", "Store codes lose their zeros and dates become January", 14],
+  [8, 1, "Joins", "Joins and aggregations: daily sales by store", "Voided lines add £111,815.32 to sales", 12],
+  [9, 1, "Nested JSON", "Nested web JSON and the explode trap", "explode deletes all 1,781 cancelled orders", 13],
+  [10, 1, "Delta", "Delta basics", "A retried job doubles 30 September", 13],
+  [11, 1, "Time travel", "Time travel and RESTORE", "RESTORE silently undoes the Solihull rename", 13],
+  [12, 1, "MERGE", "MERGE for loyalty changes", "16 blank rows inserted, 16 erased members kept", 13],
+  [13, 1, "Constraints", "Constraints and data quality", "Clamping negative stock gives 29,192 phantom stock-outs", 12],
+  [14, 1, "First job", "First scheduled Lakeflow Job", "Two green runs that never move past 30 September", 16],
+  [15, 1, "Review", "Season review", "The contractor's number has four silent bugs", 11],
+
+  [16, 2, "Medallion", "Medallion design in Unity Catalog", "dropDuplicates deletes 32,051 real sales lines", 11],
+  [17, 2, "Auto Loader", "Bronze with Auto Loader", "A new checkpoint folder doubles bronze", 13],
+  [18, 2, "Schema drift", "Schema drift and rescued data", "A column inserted mid-file shifts every value", 13],
+  [19, 2, "Dedup", "Deduplication and the late duplicate", "The re-sent file slips in the next morning", 13],
+  [20, 2, "Midnight UTC", "The midnight UTC bug", "2,234 orders land on the wrong day", 14],
+  [21, 2, "SCD 1 vs 2", "SCD Type 1 vs 2 with MERGE", "121,263 false pricing errors", 13],
+  [22, 2, "Star schema", "Star schema at the right grain", "An inner join drops 1,156 lines", 12],
+  [23, 2, "Fan-out", "The join that doubles revenue", "Promotion revenue comes out 12% too high", 11],
+  [24, 2, "Jobs", "Multi-task jobs and file-arrival triggers", "A green run whose checks only printed FAIL", 17],
+  [25, 2, "Backfills", "Idempotency and backfills", "The runbook's backfill deletes Sunday 20 September", 11],
+  [26, 2, "Testing", "Testing pipelines", "UTC plus one passes every check, then fails in winter", 13],
+  [27, 2, "Wrap", "Project wrap", "Erased members are still on 655 till lines", 9],
+
+  [28, 3, "SDP", "Lakeflow Spark Declarative Pipelines (formerly DLT)", "A streaming table counts 825 stores", 11],
+  [29, 3, "SQL pipeline", "A pipeline in SQL", "Gold reads the wrong silver and quietly goes stale", 13],
+  [30, 3, "Python API", "The pyspark.pipelines Python API", "Every order is frozen at CREATED", 12],
+  [31, 3, "Expectations", "Expectations and quarantine", "EXPECT keeps all 6,060 bad rows", 11],
+  [32, 3, "AUTO CDC", "AUTO CDC INTO and SCD Type 2", "469 Gold members end up on the wrong tier", 13],
+  [33, 3, "Event log", "Event log and the full-refresh landmine", "A full refresh loses two days of history", 13],
+  [34, 3, "Connect", "Lakeflow Connect: file upload, standard and managed connectors", "A changes-only upload wipes 403 stores", 12],
+  [35, 3, "Compare", "Hand-coded vs declarative", "The comparison is a day apart", 9],
+
+  [36, 4, "Sensors", "Fridge sensor simulator and the trigger error", "INFINITE_STREAMING_TRIGGER_NOT_SUPPORTED, then a stream that stops", 11],
+  [37, 4, "availableNow", "Scheduled availableNow streaming", "The freshness check passes while 20 minutes behind", 11],
+  [38, 4, "Windows", "Windows and watermarks", "One fast clock drops nearly every reading", 11],
+  [39, 4, "Stateful alerts", "Stateful alerts", "1,153 alerts by 08:29, 955 of them defrosts; the real failure is 28 of them, and the dead sensor raises none", 12],
+  [40, 4, "Stream-table", "Stream-to-table joins", "An inner join hides the hire freezer holding Kensington's stock: 30 readings, gone for good", 11],
+  [41, 4, "Stream-stream", "Stream-to-stream joins", "A join with no watermark holds all 82,041 rows of the morning, and loses the dead sensor's check", 11],
+  [42, 4, "foreachBatch", "foreachBatch with MERGE", "A retried batch merges again and the 394 re-sent readings come back", 0, "next"],
+  [43, 4, "Checkpoints", "Checkpoints", "Change the query, keep the checkpoint, and the restart goes wrong", 0],
+  [44, 4, "Always-on", "Always-on and real-time mode", "An always-on stream bills all night for a trickle of readings", 0, "planned", "partPAID"],
+  [45, 4, "On-call", "Alerts and on-call", "The freezer started warming at 07:10; the alert came at 08:06", 0],
+  [46, 4, "Latency/cost", "Latency vs cost", "Every-minute freshness that costs more than the stock it saves", 0],
+
+  [47, 5, "Warehouses", "SQL warehouses and the query profile", "A one-day dashboard tile scans every till line", 0],
+  [48, 5, "QUALIFY", "QUALIFY, PIVOT and SQL scripting", "Ties in ROW_NUMBER pick a different 'latest' price each run", 0],
+  [49, 5, "Metric views", "Metric views", "Two dashboards, two definitions of revenue, £111,815.32 apart", 0],
+  [50, 5, "Dashboards 1", "AI/BI dashboards, part 1", "An average of store averages passed off as the average basket", 0],
+  [51, 5, "Dashboards 2", "AI/BI dashboards, part 2", "A filter that applies to some tiles and not others", 0],
+  [52, 5, "Genie 1", "Genie Agents (formerly Genie Spaces), part 1", "Asked for sales, Genie includes voided lines", 0],
+  [53, 5, "Genie 2", "Genie Agents, part 2", "Asked how many stores trade, Genie counts 412, dark stores included", 0],
+  [54, 5, "Wrap", "Project wrap", "", 0],
+
+  [55, 6, "Privileges", "Privileges and the USE SCHEMA gotcha", "SELECT granted, still PERMISSION_DENIED", 0],
+  [56, 6, "Row filters", "Row filters", "A store manager sees every store through a view", 0],
+  [57, 6, "Column masks", "Column masks for PII", "The email is masked; the plain-text copy in bronze is not", 0],
+  [58, 6, "ABAC", "ABAC with governed tags", "A new PII column arrives untagged, so unmasked", 0, "planned", "FE?"],
+  [59, 6, "Lineage", "Lineage and audit", "Lineage stops where a notebook wrote by path", 0, "planned", "FE?"],
+  [60, 6, "Secrets", "Secrets and connections", "A token pasted into a notebook lives on in its history", 0],
+  [61, 6, "Sharing", "OpenSharing (formerly Delta Sharing)", "Sharing a table shares more history than you meant", 0, "planned", "FE?"],
+  [62, 6, "DQ monitoring", "Data quality monitoring", "A row-count monitor stays green while a column goes all null", 0],
+  [63, 6, "Checklist", "The auditor's checklist", "", 0],
+
+  [64, 7, "How Spark runs", "How Spark runs a query", "One innocent action reads every file twice", 0],
+  [65, 7, "Profile vs UI", "Query profile vs Spark UI", "The slow part is waiting, not computing", 0, "planned", "partPAID"],
+  [66, 7, "Small files", "Small files and predictive optimisation", "Five-minute appends write thousands of tiny files", 0],
+  [67, 7, "Clustering", "Liquid clustering vs partitioning, measured", "Partitioning by store gives 400 folders of tiny files", 0],
+  [68, 7, "Skew", "Joins, AQE and the flagship skew", "Store 0001 is 9% of all till lines: one task runs while the rest wait", 0],
+  [69, 7, "Caching", "Caching on serverless", "The tutorial's df.cache() doesn't do what it says on serverless", 0],
+  [70, 7, "VACUUM", "VACUUM and the time-travel trap", "VACUUM deletes the files a RESTORE needed", 0],
+  [71, 7, "Compute", "Compute choices", "A cluster left running over the weekend", 0, "planned", "PAID"],
+  [72, 7, "Zombie jobs", "Zombie jobs and billing tables", "A schedule nobody owns still runs every five minutes", 0, "planned", "FE?"],
+  [73, 7, "Playbook", "The cost playbook", "", 0],
+
+  [74, 8, "Git folders", "Git folders", "Two people edit one notebook and a change disappears", 0],
+  [75, 8, "Packages", "Notebooks to packages", "%run chains that break when a folder moves", 0],
+  [76, 8, "CLI + OAuth", "CLI and OAuth", "A personal access token that never expires", 0],
+  [77, 8, "Bundles 1", "Declarative Automation Bundles (formerly Asset Bundles), part 1", "Deploying to production with development settings", 0],
+  [78, 8, "Bundles 2", "Declarative Automation Bundles, part 2", "A deploy overwrites the fix someone made by hand", 0],
+  [79, 8, "CI/CD", "CI/CD with GitHub Actions", "Tests pass in CI against an empty schema", 0, "planned", "FE?"],
+  [80, 8, "VS Code", "VS Code and Databricks Connect", "Works on the laptop, fails on serverless: version mismatch", 0],
+  [81, 8, "Operating", "Operating in production", "A 3 a.m. failure retries until the data is wrong", 0],
+
+  [82, 9, "ML map", "The ML map", "", 0],
+  [83, 9, "PIT features", "Point-in-time features", "Features joined on today's values leak the future", 0],
+  [84, 9, "Tracking", "Experiment tracking", "The best run can't be reproduced", 0],
+  [85, 9, "Forecasting", "Forecasting every store × product", "A loop over every series that never finishes", 0],
+  [86, 9, "Backtesting", "Backtesting", "A random split scores brilliantly and forecasts badly", 0],
+  [87, 9, "Safety stock", "Safety stock", "4,830 negative stock counts skew the order quantities", 0],
+  [88, 9, "Churn", "Churn and the 0.97 leakage", "An AUC of 0.97 because a feature already knows who left", 0],
+  [89, 9, "Champion", "Champion and challenger", "The challenger wins on data it has already seen", 0],
+  [90, 9, "Serving", "Batch and serving", "Serving computes a feature differently from training", 0],
+  [91, 9, "Drift", "Drift", "The clocks go back and the model sees a shift in demand", 0],
+  [92, 9, "Wrap", "Season wrap", "", 0],
+
+  [93, 10, "GenAI map", "The GenAI map", "", 0],
+  [94, 10, "AI functions", "AI functions on reviews", "ai_query over every review, and the bill", 0],
+  [95, 10, "Supplier PDFs", "Parsing supplier PDFs", "Tables in a PDF parsed as running text", 0],
+  [96, 10, "AI Search", "AI Search (formerly Vector Search)", "The policy changed; the index still serves the old one", 0],
+  [97, 10, "RAG agent", "First RAG agent", "The agent invents a store's opening hours", 0],
+  [98, 10, "Evaluation", "Tracing and evaluation", "A prompt tweak lowers answer quality and nobody notices", 0],
+  [99, 10, "Tools + MCP", "Tools and MCP", "The agent calls a write tool without asking", 0],
+  [100, 10, "Multi-agent", "Multi-agent", "Two agents hand a question back and forth forever", 0],
+  [101, 10, "Guardrails", "Guardrails", "A shopper asks for another member's address", 0],
+  [102, 10, "Deploy", "Deploy and feedback", "", 0, "planned", "FE?"],
+  [103, 10, "Agent Bricks", "Agent Bricks", "", 0, "planned", "partPAID"],
+  [104, 10, "Wrap", "Season wrap", "", 0],
+
+  [105, 11, "Lakebase", "Lakebase", "Analytics queries run against the operational database", 0],
+  [106, 11, "Synced tables", "Synced tables", "The app reads a synced table that is minutes behind", 0],
+  [107, 11, "Store Ops app", "The Store Ops app", "", 0],
+  [108, 11, "App auth", "App authentication", "The app runs as one identity, so every manager sees every store", 0],
+  [109, 11, "Write-back", "Writing back", "Two managers update one stock count and a write is lost", 0],
+  [110, 11, "Embed", "Embedding the assistant", "", 0],
+
+  [111, 12, "Brief", "Capstone brief", "", 0],
+  [112, 12, "Solution 1", "Capstone solution, part 1", "", 0],
+  [113, 12, "Solution 2", "Capstone solution, part 2", "", 0],
+  [114, 12, "Review", "Architecture review", "", 0],
+  [115, 12, "Certs", "Mapping to the certifications", "", 0],
+  [116, 12, "Interviews", "Interview drills", "", 0]
+].map(([n, part, short, title, brk, min, status, env]) => ({ n, part, short, title, brk, min: min || EST, est: !min, status: status || "planned", env: env || "" }));
+
+const NEXT = EPS.find(e => e.status === "next").n;
+const ENV = {
+  "": "Free Edition",
+  "FE?": "Free Edition, to confirm in the trial fortnight",
+  "PAID": "Paid trial only",
+  "partPAID": "Free Edition, with a paid-trial section"
+};
+const pad = n => String(n).padStart(2, "0");
+const lvOf = e => PARTS[e.part].lv;
+const colOf = e => LEVELS[lvOf(e)].c;
+const fmtH = m => `${Math.floor(m / 60)}h ${pad(m % 60)}m`;
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+const ALL = [0, 1, 2, 3, 4];
+let shown = new Set(ALL);
+let sel = NEXT;
+let here = null;
+
+function readHash() {
+  const m = /^#e(\d{1,3})$/.exec(location.hash || "");
+  if (m && +m[1] < EPS.length) { here = +m[1]; sel = here; } else { here = null; }
+}
+
+function renderHeader() {
+  const built = EPS.filter(e => e.status === "built");
+  const builtMin = built.reduce((s, e) => s + e.min, 0);
+  const total = EPS.reduce((s, e) => s + e.min, 0);
+  document.getElementById("stats").innerHTML =
+    `<span><b>${EPS.length}</b> episodes</span><span><b>${PARTS.length}</b> seasons</span>` +
+    `<span><b>4</b> levels</span><span><b>${built.length}</b> of ${EPS.length} built</span>` +
+    `<span><b>${fmtH(builtMin)}</b> built</span><span>about <b>${Math.round(total / 60)}h</b> in all</span>` +
+    `<span>plus a monthly <b>What changed</b></span>`;
+  document.getElementById("bar").style.width = (built.length / EPS.length * 100) + "%";
+  const f = document.getElementById("filters");
+  f.innerHTML = [1, 2, 3, 4].map(l =>
+    `<button class="chip" style="--c:${LEVELS[l].c}" data-lv="${l}" aria-pressed="${shown.has(l)}"><i></i>${LEVELS[l].name}</button>`
+  ).join("");
+  f.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+    const l = +b.dataset.lv;
+    // first click on a level shows only that level; further clicks add or remove levels
+    if (shown.size === ALL.length) shown = new Set([0, l]);
+    else if (shown.has(l)) { shown.delete(l); if (![1, 2, 3, 4].some(x => shown.has(x))) shown = new Set(ALL); }
+    else shown.add(l);
+    renderHeader(); renderMap();
+  }));
+}
+
+function renderMap() {
+  const map = document.getElementById("map");
+  map.innerHTML = PARTS.map(p => {
+    const eps = EPS.filter(e => e.part === p.n);
+    const mins = eps.reduce((s, e) => s + e.min, 0);
+    const done = eps.filter(e => e.status === "built").length;
+    const c = LEVELS[p.lv].c;
+    const meta = done === eps.length ? "built" : done ? `${done} built` : "";
+    return `<section class="part${shown.has(p.lv) ? "" : " dim"}" style="--c:${c}">
+      <div class="part-head">
+        <div class="part-num">Season ${p.n} &middot; ${p.range}</div>
+        <div class="part-name">${p.name}</div>
+        <div class="part-meta">${eps.length} episodes &middot; ${eps.some(e => e.est) ? "about " : ""}${fmtH(mins)}${meta ? " &middot; " + meta : ""}</div>
+      </div>
+      <div class="stops">${eps.map(e => `
+        <button class="stop${e.n === sel ? " sel" : ""}" data-n="${e.n}" data-status="${e.status}" aria-label="Episode ${pad(e.n)}: ${esc(e.title)}">
+          ${e.n === here ? '<span class="here">YOU ARE HERE</span>' : ""}
+          ${e.env === "PAID" ? '<span class="paid" title="Paid trial only">&pound;</span>' : ""}
+          ${e.env === "partPAID" ? '<span class="paid part-paid" title="Partly paid trial">&pound;</span>' : ""}
+          <span class="dot${e.n > 99 ? " w3" : ""}">${pad(e.n)}</span>
+          <span class="lab">${e.short}</span>
+        </button>`).join("")}
+      </div>
+    </section>`;
+  }).join("");
+  map.querySelectorAll(".stop").forEach(b => b.addEventListener("click", () => select(+b.dataset.n)));
+}
+
+function renderCard() {
+  const e = EPS[sel];
+  const p = PARTS[e.part];
+  const statusTxt = { built: "Built", next: "Next up", planned: "Planned" }[e.status];
+  const card = document.getElementById("card");
+  card.style.setProperty("--c", colOf(e));
+  const len = e.est ? `About ${e.min} minutes <small>(estimate)</small>` : `About ${e.min} minutes`;
+  const note = e.n === 0 ? `<div class="note">Recorded last: the trailer reuses clips from episodes 01 and 02.</div>` : "";
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="ep">Episode ${pad(e.n)}${e.n === here ? " &middot; you are here" : ""}</div>
+      <h2>${e.title}</h2>
+      <dl class="facts">
+        <dt>Season</dt><dd>${p.n} &middot; ${p.name}</dd>
+        <dt>Level</dt><dd>${p.range}</dd>
+        <dt>Length</dt><dd>${len}</dd>
+        <dt>Runs on</dt><dd>${ENV[e.env]}</dd>
+        <dt>Status</dt><dd><span class="pill ${e.status}">${statusTxt}</span></dd>
+      </dl>
+    </div>
+    ${e.brk ? `<div class="break"><div class="k">Break it${e.status === "built" ? "" : " <em>&middot; planned</em>"}</div><p>${e.brk}</p></div>` : ""}
+    ${note}
+    <div class="nav">
+      <button id="prev" ${sel === 0 ? "disabled" : ""}>&larr; Episode ${pad(Math.max(0, sel - 1))}</button>
+      <button id="next" ${sel === EPS.length - 1 ? "disabled" : ""}>Episode ${pad(Math.min(EPS.length - 1, sel + 1))} &rarr;</button>
+    </div>`;
+  document.getElementById("prev").onclick = () => select(sel - 1);
+  document.getElementById("next").onclick = () => select(sel + 1);
+}
+
+function select(n) {
+  if (n < 0 || n >= EPS.length) return;
+  sel = n;
+  document.querySelectorAll(".stop").forEach(b => b.classList.toggle("sel", +b.dataset.n === n));
+  renderCard();
+}
+
+document.addEventListener("keydown", ev => {
+  if (ev.target.closest && ev.target.closest("input, textarea")) return;
+  if (ev.key === "ArrowRight") { select(sel + 1); ev.preventDefault(); }
+  if (ev.key === "ArrowLeft") { select(sel - 1); ev.preventDefault(); }
+});
+window.addEventListener("hashchange", () => { readHash(); renderMap(); renderCard(); });
+
+readHash();
+renderHeader();
+renderMap();
+renderCard();
+</script>
+
+</body></html>
