@@ -66,3 +66,20 @@ display(stores.groupBy("fromat").count())
 # MAGIC | **Total** | **66** |
 # MAGIC
 # MAGIC Source: stores reference snapshot of 23 September 2026. Includes Solihull Local (0413), opened 20 September.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Homework
+# MAGIC Grace's next review is the **North West**, and she only wants **Superstores**.
+# MAGIC
+# MAGIC 1. Add a second dropdown widget called `format`, with the choices `Dark`, `Express`, `Local` and `Superstore`.
+# MAGIC 2. Use it in the `%sql` cell alongside `:region`, so both widgets filter the same query.
+# MAGIC
+# MAGIC **How many Superstores does the North West have?** Use the latest store snapshot, as this notebook does.
+# MAGIC
+# MAGIC Put your answer in the comments. The answer is at the start of episode 04.
+
+# COMMAND ----------
+
+# Your answer here
