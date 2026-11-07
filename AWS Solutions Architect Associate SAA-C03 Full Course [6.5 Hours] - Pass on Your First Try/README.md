@@ -3,7 +3,7 @@
 Every slide from the SAA-C03 video series, free to download. 582 slides across 18 modules
 and 5 full practice exams.
 
-**Watch the series:** https://youtu.be/YDxTIgENyjw  
+**Watch the series:** https://youtu.be/4tyw0UYgYsE  
 **Contact:** admin@sthithapragna.com
 
 ---

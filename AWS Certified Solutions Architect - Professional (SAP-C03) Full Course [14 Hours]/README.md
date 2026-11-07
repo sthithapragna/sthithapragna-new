@@ -6,7 +6,7 @@ Every slide from the SAP-C03 video series, free to download. 1537 slides across
 This is the current version of the exam. It replaces SAP-C02: five domains instead
 of four, a lower passing score, and AI in every domain.
 
-**Watch the series:** https://youtu.be/OoWxbXnB1Uk  
+**Watch the series:** Part 1 https://youtu.be/JijdrJ0B15s · Part 2 https://youtu.be/OoWxbXnB1Uk  
 **Contact:** admin@sthithapragna.com
 
 ---
