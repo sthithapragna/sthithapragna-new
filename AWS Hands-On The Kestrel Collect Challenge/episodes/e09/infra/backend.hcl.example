@@ -1,0 +1,2 @@
+# Copy to backend.hcl and put your account ID in the name.
+bucket = "collect-tfstate-123456789012-us-east-1-an"
