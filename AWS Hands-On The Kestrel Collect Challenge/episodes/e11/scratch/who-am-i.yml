@@ -1,0 +1,21 @@
+# For a throwaway repository: can it get into our AWS account?
+name: who-am-i
+
+on: workflow_dispatch
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  try:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/collect-github-plan
+          aws-region: us-east-1
+          mask-aws-account-id: true
+
+      - run: aws sts get-caller-identity
+      - run: aws s3 ls

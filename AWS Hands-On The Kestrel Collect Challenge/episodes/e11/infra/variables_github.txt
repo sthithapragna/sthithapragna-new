@@ -1,0 +1,11 @@
+
+variable "github_owner" {
+  description = "Your GitHub user or organisation, exactly as in the repository's URL"
+  type        = string
+}
+
+variable "github_repo" {
+  description = "Your copy of the course repository"
+  type        = string
+  default     = "kestrel-collect"
+}
